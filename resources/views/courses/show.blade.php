@@ -1,8 +1,4 @@
-@extends('layouts.app')
-
-@section('title', $course->name)
-
-@section('content')
+<x-layouts.app title="{{ $course->name }}">
     <a class="back-link" href="{{ route('courses.index') }}">← All courses</a>
     <div class="page-heading detail-heading"><div><p class="eyebrow">COURSE #{{ $course->id }}</p><h1>{{ $course->name }}</h1><p class="muted">Course catalog details and availability.</p></div><a class="button button-primary" href="{{ route('courses.edit', $course) }}">Edit course</a></div>
     <section class="card details-card"><h2>Course details</h2><dl class="details-grid">
@@ -14,4 +10,4 @@
         <div><dt>Created</dt><dd>{{ $course->created_at?->format('M j, Y') }}</dd></div>
         <div><dt>Last updated</dt><dd>{{ $course->updated_at?->format('M j, Y') }}</dd></div>
     </dl></section>
-@endsection
+</x-layouts.app>

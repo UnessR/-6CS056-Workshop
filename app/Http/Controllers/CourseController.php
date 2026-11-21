@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class CourseController extends Controller
@@ -23,7 +24,10 @@ class CourseController extends Controller
                         ->orWhere('description', 'like', "%{$search}%");
                 });
             })
-            ->when(in_array($difficulty, self::DIFFICULTIES, true), fn ($query) => $query->where('difficulty', $difficulty))
+            ->when(
+                in_array($difficulty, self::DIFFICULTIES, true),
+                fn ($query) => $query->where('difficulty', $difficulty)
+            )
             ->orderBy('name')
             ->paginate(10)
             ->withQueryString();
@@ -33,7 +37,7 @@ class CourseController extends Controller
 
     public function create(): View
     {
-        return view('courses.create', ['course' => new Course()]);
+        return view('courses.create', ['course' => new Course(['is_active' => true])]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -81,7 +85,7 @@ class CourseController extends Controller
             'description' => ['nullable', 'string', 'max:2000'],
             'duration' => ['required', 'integer', 'min:1', 'max:65535'],
             'fee' => ['required', 'numeric', 'min:0', 'max:99999999.99'],
-            'difficulty' => ['required', 'in:Easy,Medium,Hard'],
+            'difficulty' => ['required', Rule::in(self::DIFFICULTIES)],
             'is_active' => ['sometimes', 'boolean'],
         ];
     }

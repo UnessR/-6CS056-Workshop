@@ -1,0 +1,1 @@
+<footer class="site-footer">Training Institute · Student and course records</footer>

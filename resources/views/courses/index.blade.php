@@ -1,8 +1,4 @@
-@extends('layouts.app')
-
-@section('title', 'Courses')
-
-@section('content')
+<x-layouts.app title="Courses">
     <div class="page-heading">
         <div><p class="eyebrow">CATALOG</p><h1>Courses</h1><p class="muted">Manage the training institute's course catalog.</p></div>
         <a class="button button-primary" href="{{ route('courses.create') }}">Add course <span aria-hidden="true">＋</span></a>
@@ -26,9 +22,7 @@
                         <td><a class="person-link" href="{{ route('courses.show', $course) }}">{{ $course->name }}</a><span class="cell-subtext">Course #{{ $course->id }}</span></td>
                         <td>{{ $course->duration }} {{ $course->duration === 1 ? 'week' : 'weeks' }}</td><td>{{ number_format((float) $course->fee, 2) }}</td>
                         <td><span class="level-pill level-{{ strtolower($course->difficulty) }}">{{ $course->difficulty }}</span></td><td><span class="status-pill {{ $course->is_active ? 'status-active' : 'status-inactive' }}">{{ $course->is_active ? 'Active' : 'Inactive' }}</span></td>
-                        <td><div class="row-actions"><a href="{{ route('courses.show', $course) }}">View</a><a href="{{ route('courses.edit', $course) }}">Edit</a>
-                            <form method="POST" action="{{ route('courses.destroy', $course) }}" onsubmit="return confirm('Delete this course?')">@csrf @method('DELETE')<button class="text-button text-danger" type="submit">Delete</button></form>
-                        </div></td>
+                        <td><div class="row-actions"><a href="{{ route('courses.show', $course) }}">View</a><a href="{{ route('courses.edit', $course) }}">Edit</a><x-delete-form :action="route('courses.destroy', $course)" /></div></td>
                     </tr>
                 @empty
                     <tr><td colspan="6" class="empty-state"><strong>No courses yet</strong><span>{{ $search !== '' || $difficulty !== '' ? 'Try changing the search or level filter.' : 'Add the first course to get started.' }}</span></td></tr>
@@ -38,4 +32,4 @@
         @if ($courses->hasPages())<div class="pagination-wrap">{{ $courses->links() }}</div>@endif
     </section>
     <p class="list-count">{{ $courses->total() }} {{ $courses->total() === 1 ? 'course' : 'courses' }}</p>
-@endsection
+</x-layouts.app>

@@ -36,15 +36,7 @@ class StudentController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('students', 'email')],
-            'phone' => ['required', 'string', 'max:20'],
-            'address' => ['nullable', 'string', 'max:500'],
-            'date_of_birth' => ['nullable', 'date', 'before_or_equal:today'],
-        ]);
-
-        $student = Student::create($validated);
+        $student = Student::create($request->validate($this->rules()));
 
         return redirect()->route('students.show', $student)
             ->with('success', "Student {$student->name} was created.");
@@ -62,15 +54,7 @@ class StudentController extends Controller
 
     public function update(Request $request, Student $student): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('students', 'email')->ignore($student->id)],
-            'phone' => ['required', 'string', 'max:20'],
-            'address' => ['nullable', 'string', 'max:500'],
-            'date_of_birth' => ['nullable', 'date', 'before_or_equal:today'],
-        ]);
-
-        $student->update($validated);
+        $student->update($request->validate($this->rules($student)));
 
         return redirect()->route('students.show', $student)
             ->with('success', 'Student details were updated.');
@@ -82,5 +66,21 @@ class StudentController extends Controller
 
         return redirect()->route('students.index')
             ->with('success', 'Student was deleted.');
+    }
+
+    private function rules(?Student $student = null): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('students', 'email')->ignore($student?->id),
+            ],
+            'phone' => ['required', 'string', 'max:20'],
+            'address' => ['nullable', 'string', 'max:500'],
+            'date_of_birth' => ['nullable', 'date', 'before_or_equal:today'],
+        ];
     }
 }

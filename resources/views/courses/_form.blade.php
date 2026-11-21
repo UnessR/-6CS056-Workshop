@@ -1,8 +1,21 @@
 <div class="form-grid">
-    <div class="field field-full"><label for="name">Course name <span class="required">*</span></label><input id="name" name="name" type="text" maxlength="255" value="{{ old('name', $course->name) }}" required aria-describedby="name-error">@error('name')<span class="field-error" id="name-error">{{ $message }}</span>@enderror</div>
-    <div class="field field-full"><label for="description">Description</label><textarea id="description" name="description" rows="4" maxlength="2000" aria-describedby="description-error">{{ old('description', $course->description) }}</textarea>@error('description')<span class="field-error" id="description-error">{{ $message }}</span>@enderror</div>
-    <div class="field"><label for="duration">Duration in weeks <span class="required">*</span></label><input id="duration" name="duration" type="number" min="1" max="65535" step="1" value="{{ old('duration', $course->duration) }}" required aria-describedby="duration-error">@error('duration')<span class="field-error" id="duration-error">{{ $message }}</span>@enderror</div>
-    <div class="field"><label for="fee">Fee <span class="required">*</span></label><input id="fee" name="fee" type="number" min="0" max="99999999.99" step="0.01" inputmode="decimal" value="{{ old('fee', $course->fee) }}" required aria-describedby="fee-error">@error('fee')<span class="field-error" id="fee-error">{{ $message }}</span>@enderror</div>
-    <div class="field"><label for="difficulty">Difficulty <span class="required">*</span></label><select id="difficulty" name="difficulty" required aria-describedby="difficulty-error"><option value="">Choose a level</option>@foreach (['Easy', 'Medium', 'Hard'] as $level)<option value="{{ $level }}" @selected(old('difficulty', $course->difficulty) === $level)>{{ $level }}</option>@endforeach</select>@error('difficulty')<span class="field-error" id="difficulty-error">{{ $message }}</span>@enderror</div>
-    <div class="field field-check"><label class="check-label" for="is_active"><input id="is_active" name="is_active" type="checkbox" value="1" @checked(old('is_active', $course->exists ? $course->is_active : true))> <span><strong>Course is active</strong><small>Active courses are currently offered.</small></span></label>@error('is_active')<span class="field-error">{{ $message }}</span>@enderror</div>
+    <x-form-input name="name" label="Course name" :value="$course->name" maxlength="255" required wrapper="field-full" />
+    <x-form-textarea name="description" label="Description" :value="$course->description" rows="4" maxlength="2000" wrapper="field-full" />
+    <x-form-input name="duration" label="Duration in weeks" type="number" :value="$course->duration" min="1" max="65535" step="1" required />
+    <x-form-input name="fee" label="Fee" type="number" :value="$course->fee" min="0" max="99999999.99" step="0.01" inputmode="decimal" required />
+    <div class="field">
+        <label for="difficulty">Difficulty</label>
+        <select id="difficulty" name="difficulty" required @if ($errors->has('difficulty')) aria-invalid="true" aria-describedby="difficulty-error" @endif>
+            <option value="">Choose a level</option>
+            @foreach (['Easy', 'Medium', 'Hard'] as $level)
+                <option value="{{ $level }}" @selected(old('difficulty', $course->difficulty) === $level)>{{ $level }}</option>
+            @endforeach
+        </select>
+        @error('difficulty')<span class="field-error" id="difficulty-error">{{ $message }}</span>@enderror
+    </div>
+    <div class="field field-check">
+        <input type="hidden" name="is_active" value="0">
+        <label class="check-label" for="is_active"><input id="is_active" name="is_active" type="checkbox" value="1" @checked(old('is_active', $course->is_active))> <span><strong>Course is active</strong><small>Active courses are currently offered.</small></span></label>
+        @error('is_active')<span class="field-error">{{ $message }}</span>@enderror
+    </div>
 </div>

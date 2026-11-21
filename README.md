@@ -1,56 +1,53 @@
 # Training Institute Management
 
-Week 1 Laravel application for managing students and courses. The two resources are intentionally independent in this workshop; their many-to-many relationship is planned for a later workshop.
+Workshop 2 refactors the Week 1 Laravel application around MVC and reusable Blade components. The app continues to manage students and courses as independent resources.
 
-## Features
+## Workshop 2 work
 
-- Student create, list, detail, edit, and delete pages
-- Course create, list, detail, edit, and delete pages
-- Server-side validation, unique student emails, CSRF protection, and delete/update method spoofing
-- Search and pagination for students; search, difficulty filtering, and pagination for courses
-- Responsive Blade interface with accessible labels and feedback messages
-- MySQL persistence through Laravel migrations
+- StudentController and CourseController own CRUD request logic; routes/web.php maps resource routes to them.
+- Resource route model binding supplies Student and Course models to detail, edit, update, and delete actions.
+- Each controller defines validation rules once. Student email uniqueness ignores the current student during edits.
+- The Student model casts date of birth and exposes a computed age accessor.
+- A shared Blade component layout renders the page shell, navbar, success/error feedback, and footer.
+- Reusable components render form inputs, textareas, and delete forms. Student create/edit share a form component; Course create/edit share a form partial.
+- The responsive pages retain search, filters, pagination, and CRUD behavior from Week 1.
 
 ## Requirements
 
-- PHP 8.2 or later with `pdo_mysql`, `mbstring`, `openssl`, and `zip` enabled
+- PHP 8.2 or later with pdo_mysql, mbstring, openssl, and zip enabled
 - Composer
 - MySQL or MariaDB
 
-If Composer reports that ZIP support is missing under XAMPP PHP, enable `extension=zip` in `C:\xampp\php\php.ini` (the extension DLL is already installed at `C:\xampp\php\ext\php_zip.dll`) and open a new terminal.
-
 ## Local setup
 
-1. Create the workshop database in MySQL:
+1. Create the workshop database if it does not already exist:
 
-   ```sql
    CREATE DATABASE WorkshopDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-   ```
 
 2. Install dependencies and prepare the environment:
 
-   ```bash
    composer install
    cp .env.example .env
    php artisan key:generate
-   ```
 
-   On Windows PowerShell, use `Copy-Item .env.example .env` instead of `cp`.
+   In Windows PowerShell, use Copy-Item .env.example .env instead of cp.
 
-3. Check the database settings in `.env`. The example uses `127.0.0.1:3306`, user `root`, and a blank password. Change them if your MySQL server uses different credentials.
+3. Check the database values in .env. The example uses 127.0.0.1:3306, username root, and a blank password.
 
-4. Create the application tables and start Laravel:
+4. Run migrations and start Laravel:
 
-   ```bash
    php artisan migrate
    php artisan serve
-   ```
 
-5. Open [http://127.0.0.1:8000](http://127.0.0.1:8000). The home page redirects to the student list. Add students and courses from their respective pages.
+5. Open http://127.0.0.1:8000, then use the Students and Courses navigation.
 
-## Database tables
+If Composer reports that ZIP support is missing with XAMPP PHP, enable extension=zip in C:\xampp\php\php.ini and open a new terminal.
 
-- `students`: name, unique email, phone, optional address and date of birth, timestamps
-- `courses`: name, optional description, duration in weeks, decimal fee, difficulty (Easy/Medium/Hard), active status, timestamps
+## Main folders
 
-Laravel's default users, cache, and jobs migrations are also retained from the project scaffold.
+- app/Http/Controllers/: Student and Course request logic
+- app/Models/: Eloquent models and Student data behavior
+- database/migrations/: students and courses table definitions
+- resources/views/components/: shared layout, navbar, footer, alerts, fields, and delete form
+- resources/views/students/ and resources/views/courses/: resource pages
+- routes/web.php: home page and resource routes
